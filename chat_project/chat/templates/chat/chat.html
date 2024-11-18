@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5>Chat with User {{ request.GET.user }}</h5>
+            </div>
+            <div class="card-body">
+                {% if messages %}
+                    <div class="chat-box" style="max-height: 400px; overflow-y: auto;">
+                        {% for message in messages %}
+                            <div class="mb-3 {% if message.sender == request.user %}text-end{% else %}text-start{% endif %}">
+                                <span class="badge {% if message.sender == request.user %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ message.sender.username }}
+                                </span>
+                                <p class="d-inline-block border rounded p-2">
+                                    {{ message.content }}
+                                </p>
+                                <small class="text-muted d-block">
+                                    {{ message.timestamp|date:"d M Y H:i" }}
+                                </small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No messages yet. Start the conversation!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5>Send a Message</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Chat with {{ other_user.username }}</h1>
+<div class="chat-box border p-3 mb-3" style="max-height: 400px; overflow-y: auto;">
+    {% for message in messages %}
+        <div class="mb-3 {% if message.sender == request.user %}text-end{% else %}text-start{% endif %}">
+            <span class="badge {% if message.sender == request.user %}bg-success{% else %}bg-secondary{% endif %}">
+                {{ message.sender.username }}
+            </span>
+            <p class="d-inline-block border rounded p-2">
+                {{ message.content }}
+            </p>
+            {% if message.file %}
+                <br>
+                <a href="{{ message.file.url }}" target="_blank" class="btn btn-link">Download File</a>
+            {% endif %}
+            <small class="text-muted d-block">
+                {{ message.timestamp|date:"d M Y H:i" }}
+            </small>
+        </div>
+    {% empty %}
+        <p class="text-muted">No messages yet.</p>
+    {% endfor %}
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <textarea name="content" class="form-control" rows="3" placeholder="Type your message here"></textarea>
+    <div class="mt-2">
+        <input type="file" name="file" class="form-control-file">
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Send</button>
+</form>
+{% endblock %}
